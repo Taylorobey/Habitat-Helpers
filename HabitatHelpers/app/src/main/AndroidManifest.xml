@@ -18,6 +18,37 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:parentActivityName="com.example.habitathelpers.MainActivity"
+            android:theme="@style/Theme.HabitatHelpers"/>
+
+        <activity
+            android:name=".RegActivity"
+            android:exported="true"
+            android:parentActivityName="com.example.habitathelpers.MainActivity"
+            android:theme="@style/Theme.HabitatHelpers"/>
+
+        <activity
+            android:name=".CreateActivity"
+            android:exported="true"
+            android:parentActivityName="com.example.habitathelpers.MainActivity"
+            android:theme="@style/Theme.HabitatHelpers"/>
+
+        <activity
+            android:name=".LoadActivity"
+            android:exported="true"
+            android:parentActivityName="com.example.habitathelpers.MainActivity"
+            android:theme="@style/Theme.HabitatHelpers"/>
+
+        <activity
+            android:name=".EditorActivity"
+            android:exported="true"
+            android:parentActivityName="com.example.habitathelpers.MainActivity"
+            android:theme="@style/Theme.HabitatHelpers"/>
+
     </application>
 
 </manifest>

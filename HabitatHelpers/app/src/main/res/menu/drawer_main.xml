@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/home"/>
+        <item
+            android:id="@+id/nav_create_new"
+            android:icon="@drawable/ic_add"
+            android:title="@string/create_a_new_habitat"/>
+        <item
+            android:id="@+id/nav_load"
+            android:icon="@drawable/ic_cloud_download"
+            android:title="@string/load_a_habitat"/>
+    </group>
+</menu>
