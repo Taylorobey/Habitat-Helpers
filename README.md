@@ -14,6 +14,8 @@ Pull data from database in activities
 
 Basic transition animations
 
+User/App persistence
+
 
 
 
