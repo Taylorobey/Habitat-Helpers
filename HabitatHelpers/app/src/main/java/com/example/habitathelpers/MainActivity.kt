@@ -15,6 +15,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnLoginInteractionListener, OnMainInteractionListener, OnLoadInteractionListener {
 
+    // TODO: CreateActivity implementation
+    // TODO: LoginActivity implementation
+    // TODO: EditorActivity implementation
+    // TODO: LoadActivity implementation
+    // TODO: RegActivity implementation
+
+    private var sub_opened: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +31,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // TODO: additional toolbar functionality
         setSupportActionBar(toolbar)
 
+        //navigation drawer setup
         val toggle = ActionBarDrawerToggle(this, mainAct, toolbar, R.string.open_nav, R.string.close_nav)
         mainAct.addDrawerListener(toggle)
         toggle.syncState()
@@ -31,17 +39,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView.setNavigationItemSelectedListener(this)
 
         // TODO: check if user is logged in
-        //default declaration so code runs
+        //current default declaration so code runs
         //should be set to true if user is logged in
-        var logged_in = true
+        var logged_in = false
 
-        //if not logged in, load fragment_login and get buttons
+        //if not logged in, inflate fragment_login and get buttons
         if (!logged_in){
             supportFragmentManager.beginTransaction().replace(R.id.linear2, LoginFragment())
                 .addToBackStack("")
                 .commit()
         }
-        // if logged in, load fragment_main and get buttons
+        // if logged in, inflate fragment_main and get buttons
         else {
             supportFragmentManager.beginTransaction().replace(R.id.linear2, MainFragment())
                 .addToBackStack("")
@@ -53,30 +61,32 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     //handle fragment button presses
     override fun onLoginInteraction(uri: View){
         // login button
-        // load LoginActivity
+        // navigate to LoginActivity
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
     }
     override fun onRegisterInteraction(uri: View){
         // register button
-        // load RegActivity
+        // navigate to RegActivity
         val intent = Intent(this, RegActivity::class.java)
         startActivity(intent)
     }
     override fun onCreateInteraction(uri: View){
         // create new habitat button
-        //load CreateActivity
+        // navigate to CreateActivity
         val intent = Intent(this, CreateActivity::class.java)
         startActivity(intent)
     }
     override fun onLoadInteraction(uri: View){
         // load habitat button
-        // load LoadFragment
+        // inflate LoadFragment
+        sub_opened = true
         supportFragmentManager.beginTransaction().replace(R.id.linear2, LoadFragment())
             .addToBackStack("")
             .commit()
     }
 
+    //navigation drawer presses
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.nav_home-> {
@@ -102,7 +112,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if(mainAct.isDrawerOpen(GravityCompat.START)){
             mainAct.closeDrawer(GravityCompat.START)
         }
+        else if (sub_opened){
+            sub_opened = false
+            // use super once to bring back button menu in fragment
+            super.onBackPressed()
+        }
         else {
+            //use super twice to uninflate fragment and then navigate to previous activity
+            super.onBackPressed()
             super.onBackPressed()
         }
     }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Habitat Helpers</string>
+    <string name="app_name">Habitat Helper</string>
     <string name="welcome">Welcome to Habitat Helper, a tool to help you plan the perfect habitat for your pet!</string>
     <string name="login">Log In</string>
     <string name="reg">Register</string>

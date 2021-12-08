@@ -22,13 +22,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        android:text="Taylor Robey"
+        android:text="Habitat Helper"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/white"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="tdrobey@syr.edu"
+        android:text="Taylor Robey: tdrobey@syr.edu"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/white"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="Anton : "
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/white"/>
 </LinearLayout>

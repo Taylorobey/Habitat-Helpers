@@ -22,9 +22,14 @@
 
         <FrameLayout
             android:id="@+id/mainContainer"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@id/scrollView">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -63,6 +68,7 @@
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
 
         </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
