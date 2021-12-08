@@ -2,10 +2,6 @@
 
 To do list:
 
-Implement login
-
-Implement Registration
-
 Implement cloud save/load functionality
 
 Implement create activity
@@ -18,4 +14,10 @@ Host database
 
 Pull data from database in activities
 
-Additional features for points
+Basic transition animations
+
+#Additional features for points:
+
+Implement login
+
+Implement Registration
