@@ -1,5 +1,9 @@
 package com.example.habitathelpers
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Pet (
     var name:String,
     var species:String,
@@ -11,5 +15,4 @@ data class Pet (
 
     // TODO: Finalize attributes of pet class
 
-    ){
-}
+    ): Parcelable

@@ -1,35 +1,44 @@
 package com.example.habitathelpers
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 
 class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VER) {
 
+    // Declare variables for pet and hab lists
+    private lateinit var petList: MutableList<Pet>
+    private lateinit var habList: MutableList<Hab>
+
     override fun onCreate(db: SQLiteDatabase?) {
         db!!.execSQL(CREATE_TABLE_HABS)
-        db!!.execSQL(CREATE_TABLE_PETS)
-        initializeTables()
+        db.execSQL(CREATE_TABLE_PETS)
+        initializeTables(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db!!.execSQL(DROP_TABLE_HABS)
-        db!!.execSQL(DROP_TABLE_PETS)
+        db.execSQL(DROP_TABLE_PETS)
         closeDB()
     }
 
-    fun initializeTables(){
-        val db = this.readableDatabase
+    fun initializeTables(db: SQLiteDatabase){
         val queryp = "SELECT * FROM pets"
         val p = db.rawQuery(queryp, null)
         val queryh = "SELECT * FROM habs"
         val h = db.rawQuery(queryh, null)
         if( p.count <= 0) {
             //initialize pets table
+            insertAllPets()
         }
         if( h.count <= 0) {
             //initialize habs table
+            insertAllHabs()
         }
+        p.close()
+        h.close()
+        // TODO: get database from external source, import to local database
     }
 
     fun closeDB(){
@@ -43,71 +52,108 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         val db = this.readableDatabase
         val query = "SELECT * FROM pets"
         val c = db.rawQuery(query, null)
-        return c.count
+        val size = c.count
+        c.close()
+        return size
     }
 
     fun getHabSize(): Int {
         val db = this.readableDatabase
         val query = "SELECT * FROM habs"
         val c = db.rawQuery(query, null)
-        return c.count
+        val size = c.count
+        c.close()
+        return size
     }
 
-    fun createPet(){
-
+    @SuppressLint("Range")
+    fun getAllPets(): MutableList<Pet>{
+        petList = mutableListOf<Pet>()
+        val db = this.readableDatabase
+        val query = "SELECT * FROM pets"
+        val c = db.rawQuery(query, null)
+        c.moveToFirst()
+        while (!c.isAfterLast){
+            val newPet = getPet(c.getString(c.getColumnIndex(COL_NAME)))
+            petList.add(newPet)
+            c.moveToNext()
+        }
+        c.close()
+        return petList
     }
 
-    fun createHab(){
-
+    @SuppressLint("Range")
+    fun getAllHabs(): MutableList<Hab>{
+        habList = mutableListOf<Hab>()
+        val db = this.readableDatabase
+        val query = "SELECT * FROM habs"
+        val c = db.rawQuery(query, null)
+        c.moveToFirst()
+        while (!c.isAfterLast){
+            val newHab = getHab(c.getString(c.getColumnIndex(COL_NAME)))
+            habList.add(newHab)
+            c.moveToNext()
+        }
+        c.close()
+        return habList
     }
 
     fun getPet(petName: String): Pet{
-        val query = "SELECT * FROM pets"
+        val query = "SELECT * FROM pets WHERE \'name=" + petName + "\'"
         val db = this.readableDatabase
         val c = db.rawQuery(query, null)
-        var petAge = 1
-        val newPet = Pet( "name", "species", "gender", petAge
-            /*db_id = c.getInt(c.getColumnIndex(COL_ID)),
-            checked = false,
-            backdrop_path = c.getString(c.getColumnIndex(COL_BACKDROP)),
-            genre_ids = emptyList(),
-            id = c.getInt(c.getColumnIndex(COL_MOVIE_ID)),
-            original_language = c.getString(c.getColumnIndex(COL_ORG_LANG)),
-            original_title =  c.getString(c.getColumnIndex(COL_ORG_TITLE)),
-            overview = c.getString(c.getColumnIndex(COL_OVERVIEW)),
-            popularity = c.getDouble(c.getColumnIndex(COL_POPULARITY)),
-            poster_path = c.getString(c.getColumnIndex(COL_POSTER)),
-            release_date = c.getString(c.getColumnIndex(COL_RELEASE)),
-            title = c.getString(c.getColumnIndex(COL_TITLE)),
-            video = true,
-            vote_average = c.getDouble(c.getColumnIndex(COL_VOTE_AVG)),
-            vote_count= c.getInt(c.getColumnIndex(COL_VOTE_CNT)),*/
+        c.moveToFirst()
+        val newPet = Pet(
+            // TODO: Finalize pet data class attributes, retrieve here
+            "name",
+            "species",
+            "gender",
+            1
         )
+        c.close()
         return newPet
     }
 
-    fun getHab(){
-
+    fun getHab(habName: String): Hab{
+        val query = "SELECT * FROM habs WHERE \'name=" + habName + "\'"
+        val db = this.readableDatabase
+        val c = db.rawQuery(query, null)
+        val newHab = Hab(
+            // TODO: Finalize enclosure data class attributes, retrieve here
+            "name",
+            "material",
+            "substrate",
+            0,
+            0,
+            0
+        )
+        c.close()
+        return newHab
     }
 
-    fun updatePet(){
-
+    fun insertAllPets(){
+        // TODO: load test data
     }
 
-    fun updateHab(){
-
+    fun insertAllHabs(){
+        // TODO: load test data
     }
 
-    fun deletePet(name: String){
-        val db = this.writableDatabase
-        db.delete("pets", "$COL_NAME = ?", arrayOf(name))
-        db.close()
-    }
-
-    fun deleteHab(){
-
-    }
-
+    /*db_id = c.getInt(c.getColumnIndex(COL_ID)),
+checked = false,
+backdrop_path = c.getString(c.getColumnIndex(COL_BACKDROP)),
+genre_ids = emptyList(),
+id = c.getInt(c.getColumnIndex(COL_MOVIE_ID)),
+original_language = c.getString(c.getColumnIndex(COL_ORG_LANG)),
+original_title =  c.getString(c.getColumnIndex(COL_ORG_TITLE)),
+overview = c.getString(c.getColumnIndex(COL_OVERVIEW)),
+popularity = c.getDouble(c.getColumnIndex(COL_POPULARITY)),
+poster_path = c.getString(c.getColumnIndex(COL_POSTER)),
+release_date = c.getString(c.getColumnIndex(COL_RELEASE)),
+title = c.getString(c.getColumnIndex(COL_TITLE)),
+video = true,
+vote_average = c.getDouble(c.getColumnIndex(COL_VOTE_AVG)),
+vote_count= c.getInt(c.getColumnIndex(COL_VOTE_CNT)),*/
 
 /*    fun getAllMovies(db: DatabaseHelper): MutableList<MovieData> {
         var dataset : MutableList<MovieData> = mutableListOf<MovieData>()
@@ -190,10 +236,10 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         private val DB_NAME = "hhelper.db"
         private val DB_VER = 1
         private val COL_ID = "id"
-        // values for pets table
         private val COL_NAME = "name"
+        // values for pets table
         private val COL_SPECIES = "species"
-        private val COL_GENDER = "species"
+        private val COL_GENDER = "gender"
         private val COL_AGE = "age"
 
         //values for habitat table

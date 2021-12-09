@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     // TODO: LoadActivity implementation
     // TODO: RegActivity implementation
 
-    private var sub_opened: Boolean = false
+    private var subOpened: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,10 +41,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // TODO: check if user is logged in
         //current default declaration so code runs
         //should be set to true if user is logged in
-        var logged_in = false
+        var loggedIn = false
 
         //if not logged in, inflate fragment_login and get buttons
-        if (!logged_in){
+        if (!loggedIn){
             supportFragmentManager.beginTransaction().replace(R.id.linear2, LoginFragment())
                 .addToBackStack("")
                 .commit()
@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onLoadInteraction(uri: View){
         // load habitat button
         // inflate LoadFragment
-        sub_opened = true
+        subOpened = true
         supportFragmentManager.beginTransaction().replace(R.id.linear2, LoadFragment())
             .addToBackStack("")
             .commit()
@@ -112,8 +112,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if(mainAct.isDrawerOpen(GravityCompat.START)){
             mainAct.closeDrawer(GravityCompat.START)
         }
-        else if (sub_opened){
-            sub_opened = false
+        else if (subOpened){
+            subOpened = false
             // use super once to bring back button menu in fragment
             super.onBackPressed()
         }

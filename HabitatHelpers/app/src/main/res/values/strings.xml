@@ -11,4 +11,14 @@
     <string name="home">Home</string>
     <string name="create_a_new_habitat">Create a new habitat</string>
     <string name="load_a_habitat">Load a habitat</string>
+    <string name="create_activity_banner_text">Welcome to Habitat Helper\'s habitat creator! \nPlease choose what you want for this new habitat below.</string>
+    <string name="pet_details">Pet Details:</string>
+    <string name="species">Species:</string>
+    <string name="gender">Gender:</string>
+    <string name="age">Age:</string>
+    <string name="habitat_details">Habitat Details:</string>
+    <string name="substrate">Substrate:</string>
+    <string name="size">Size:</string>
+    <string name="create_habitat">Create Habitat</string>
+    <string name="x">x</string>
 </resources>

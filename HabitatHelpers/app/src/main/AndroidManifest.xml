@@ -35,7 +35,12 @@
             android:name=".CreateActivity"
             android:exported="true"
             android:parentActivityName="com.example.habitathelpers.MainActivity"
-            android:theme="@style/Theme.HabitatHelpers"/>
+            android:theme="@style/Theme.HabitatHelpers">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".LoadActivity"
