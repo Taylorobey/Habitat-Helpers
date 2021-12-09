@@ -24,6 +24,8 @@ class EditorActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         toggle.syncState()
 
         navView.setNavigationItemSelectedListener(this)
+
+        // TODO: get pet and habitat data from database
     }
 
     // TODO: Implement editor

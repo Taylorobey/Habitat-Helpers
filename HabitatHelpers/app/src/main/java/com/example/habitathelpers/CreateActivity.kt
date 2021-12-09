@@ -24,6 +24,8 @@ class CreateActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         toggle.syncState()
 
         navView.setNavigationItemSelectedListener(this)
+
+        // TODO: get pet and habitat data from database
     }
 
     // TODO: menu to select habitat creation criteria
