@@ -16,7 +16,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
     override fun onCreate(db: SQLiteDatabase?) {
         db!!.execSQL(DROP_TABLE_HABS)
         db.execSQL(DROP_TABLE_PETS)
-        db!!.execSQL(CREATE_TABLE_HABS)
+        db.execSQL(CREATE_TABLE_HABS)
         db.execSQL(CREATE_TABLE_PETS)
         initializeTables(db)
     }
@@ -27,7 +27,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         closeDB()
     }
 
-    fun initializeTables(db: SQLiteDatabase){
+    private fun initializeTables(db: SQLiteDatabase){
         val queryp = "SELECT * FROM pets"
         val p = db.rawQuery(queryp, null)
         val queryh = "SELECT * FROM habs"
@@ -40,7 +40,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         h.close()
     }
 
-    fun closeDB(){
+    private fun closeDB(){
         val db = this.readableDatabase
         if(db != null && db.isOpen) {
             db.close()
@@ -67,7 +67,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
 
     @SuppressLint("Range")
     fun getAllPets(): MutableList<Pet>{
-        petList = mutableListOf<Pet>()
+        petList = mutableListOf()
         val db = this.readableDatabase
         val query = "SELECT * FROM pets"
         val c = db.rawQuery(query, null)
@@ -85,7 +85,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
 
     @SuppressLint("Range")
     fun getAllHabs(): MutableList<Hab>{
-        habList = mutableListOf<Hab>()
+        habList = mutableListOf()
         val db = this.readableDatabase
         val query = "SELECT * FROM habs"
         val c = db.rawQuery(query, null)
@@ -137,8 +137,7 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         return newHab
     }
 
-
-    fun insertAll(db: SQLiteDatabase?) = runBlocking {
+    private fun insertAll(db: SQLiteDatabase?) = runBlocking {
         //test data
         db!!.execSQL(TEST_DATAP1)
         db.execSQL(TEST_DATAP2)

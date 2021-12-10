@@ -10,7 +10,7 @@ data class Hab (
     var substrate:String,
     var length:Int,
     var width:Int,
-    var depth:Int,
+    var height:Int,
 
     // TODO: finalize attributes for enclosure class
     ): Parcelable

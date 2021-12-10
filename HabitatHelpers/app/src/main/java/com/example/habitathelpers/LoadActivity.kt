@@ -1,6 +1,7 @@
 package com.example.habitathelpers
 
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -12,8 +13,12 @@ import androidx.core.view.GravityCompat
 import com.example.habitathelpers.LoadFragment.OnLoadInteractionListener
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_load.*
+import kotlinx.android.synthetic.main.activity_load.mainAct
+import kotlinx.android.synthetic.main.activity_load.navView
+import kotlinx.android.synthetic.main.activity_load.toolbar
+import kotlinx.android.synthetic.main.activity_main.*
 
-class LoadActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, OnLoadInteractionListener {
+class LoadActivity : ActivityParent(), OnLoadInteractionListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_load)
@@ -24,7 +29,6 @@ class LoadActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .commit()
 
         // use custom toolbar
-        // TODO: additional toolbar functionality
         setSupportActionBar(toolbar)
 
         //navigation drawer setup
@@ -35,51 +39,7 @@ class LoadActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView.setNavigationItemSelectedListener(this)
     }
 
-    //menu inflation
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.bar_main, menu)
-        return true
-    }
-
-    //toolbar presses
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_about -> {
-            // TODO: Display app info popup
-            // inflate the layout of the popup window
-            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val popupView: View = inflater.inflate(R.layout.popup_about, null)
-
-            // create the popup window
-            val width = LinearLayout.LayoutParams.WRAP_CONTENT
-            val height = LinearLayout.LayoutParams.WRAP_CONTENT
-            val focusable = true // lets taps outside the popup also dismiss it
-
-            val popupWindow = PopupWindow(popupView, width, height, focusable)
-
-            // show the popup window
-            popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
-
-            // dismiss the popup window when touched
-            popupView.setOnTouchListener { _, _ ->
-                popupWindow.dismiss()
-                true
-            }
-            true
-        }
-        R.id.action_settings -> {
-            // TODO: Show settings UI
-            true
-        }
-        else -> {
-            // If we got here, the user's action was not recognized.
-            // Invoke the superclass to handle it.
-            super.onOptionsItemSelected(item)
-        }
-    }
-
-    //navigation drawer presses
+    //navigation drawer presses, override for load button
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.nav_home-> {
@@ -100,6 +60,7 @@ class LoadActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    //override to handle uninflating fragment
     override fun onBackPressed() {
         if(mainAct.isDrawerOpen(GravityCompat.START)){
             mainAct.closeDrawer(GravityCompat.START)
@@ -110,5 +71,4 @@ class LoadActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             super.onBackPressed()
         }
     }
-
 }

@@ -1,32 +1,37 @@
 package com.example.habitathelpers
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.ArrayList
 
-class CreateActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+class CreateActivity : ActivityParent(){
 
     // Declare variables for pet and hab lists
     private lateinit var petList: MutableList<Pet>
     private lateinit var habList: MutableList<Hab>
-    private var allSelected: Int = 0
+    private lateinit var resPet: Pet
+    private lateinit var resHab: Hab
+
+    //spinners
+    private lateinit var specSpinner: Spinner
+    private lateinit var genSpinner: Spinner
+    private lateinit var ageSpinner: Spinner
+    private lateinit var matSpinner: Spinner
+    private lateinit var subSpinner: Spinner
+    private lateinit var lenSpinner: Spinner
+    private lateinit var widSpinner: Spinner
+    private lateinit var hgtSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create)
 
-        allSelected = 0
-
         // use custom toolbar
-        // TODO: additional toolbar functionality
         setSupportActionBar(toolbar)
 
         //navigation drawer setup
@@ -44,95 +49,17 @@ class CreateActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         habList = myDB.getAllHabs()
 
         //populate spinners
-        val spinOut = android.R.layout.simple_list_item_1
-        //species
-        val specSpinner: Spinner = findViewById(R.id.species_spinner)
-        val specList = petList.map{it.species}
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        val specArrayAdapter = ArrayAdapter(this, spinOut, specList)
-        specSpinner.adapter = specArrayAdapter
+        popSpin(petList, habList)
 
-
-        //gender
-        val genSpinner: Spinner = findViewById(R.id.gen_spinner)
-        val genList = arrayListOf("Male", "Female")
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        val genArrayAdapter = ArrayAdapter(this, spinOut, genList)
-        genSpinner.adapter = genArrayAdapter
-
-        //age
-        val ageSpinner: Spinner = findViewById(R.id.age_spinner)
-        val ageList = arrayListOf(0, 1, 2)
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        val ageArrayAdapter = ArrayAdapter(this, spinOut, ageList)
-        ageSpinner.adapter = ageArrayAdapter
-
-        //material
-        val matSpinner: Spinner = findViewById(R.id.mat_spinner)
-        val matList = arrayListOf("Plastic", "Glass")
-            //habList.map{it.material}
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        val matArrayAdapter = ArrayAdapter(this, spinOut, matList)
-        matSpinner.adapter = matArrayAdapter
-
-        //substrate
-        val subSpinner: Spinner = findViewById(R.id.sub_spinner)
-        val subList = arrayListOf("Pine", "Spruce")
-            //habList.map{it.substrate}
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        val subArrayAdapter = ArrayAdapter(this, spinOut, subList)
-        subSpinner.adapter = subArrayAdapter
-
-        //habitat dimensions
-        val dimList = arrayListOf(0, 1, 2)
-        val lenSpinner: Spinner = findViewById(R.id.len_spinner)
-        val widSpinner: Spinner = findViewById(R.id.wid_spinner)
-        val hgtSpinner: Spinner = findViewById(R.id.hgt_spinner)
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        val dimArrayAdapter = ArrayAdapter(this, spinOut, dimList)
-        lenSpinner.adapter = dimArrayAdapter
-        widSpinner.adapter = dimArrayAdapter
-        hgtSpinner.adapter = dimArrayAdapter
-
+        //restore spinner selection on reorientation
+        resSpin(petList, habList)
 
         // get reference to button
         val createButton = findViewById<Button>(R.id.button)
 
-
         // set on-click listener
         createButton.setOnClickListener {
-            //if any items are empty, display error
-            if ((specSpinner.getCount()==0) || (genSpinner.getCount()==0) || (ageSpinner.getCount()==0)
-                || (matSpinner.getCount()==0) || (subSpinner.getCount()==0) || (lenSpinner.getCount()==0)
-                || (widSpinner.getCount()==0) || (hgtSpinner.getCount()==0)){
-                //error message
-                val errMess = "Please make a selection for each option"
-                // TODO: make button produce error if selections are missing
-            }
-            else {
-                //pass current selections to newEditor function
-                //petName
-                val petSpec = specSpinner.selectedItem.toString()
-                val petGen = genSpinner.selectedItem.toString()
-                val petAge = ageSpinner.selectedItem.toString().toInt()
-                //habName
-                val habMat = matSpinner.selectedItem.toString()
-                val habSub = subSpinner.selectedItem.toString()
-                val habLen = lenSpinner.selectedItem.toString().toInt()
-                val habWid = widSpinner.selectedItem.toString().toInt()
-                val habHgt = hgtSpinner.selectedItem.toString().toInt()
-                val passPet = mutableListOf<Pet>()
-                passPet.add(
-                    Pet(
-                        // TODO: Finalize pet data class attributes, retrieve here
-                        "name", petSpec, petGen, petAge
-                    )
-                )
-                val passHab = Hab(
-                    "name", habMat, habSub, habLen, habWid, habHgt
-                )
-                newEditor(passPet, passHab)
-            }
+            newCheck()
         }
 
     }
@@ -154,51 +81,175 @@ class CreateActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         startActivity(intent)
     }
 
-    //menu inflation
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-        inflater.inflate(R.menu.bar_main, menu)
-        return true
+    private fun newCheck(){
+        //if any items are empty/uninitialized, display error
+        if (this::specSpinner.isInitialized && this::genSpinner.isInitialized && this::ageSpinner.isInitialized
+            && this::matSpinner.isInitialized && this::subSpinner.isInitialized && this::lenSpinner.isInitialized
+            && this::widSpinner.isInitialized && this::hgtSpinner.isInitialized){
+            //pass current selections to newEditor function
+            //petName
+            val petSpec = specSpinner.selectedItem.toString()
+            val petGen = genSpinner.selectedItem.toString()
+            val petAge = ageSpinner.selectedItem.toString().toInt()
+            //habName
+            val habMat = matSpinner.selectedItem.toString()
+            val habSub = subSpinner.selectedItem.toString()
+            val habLen = lenSpinner.selectedItem.toString().toInt()
+            val habWid = widSpinner.selectedItem.toString().toInt()
+            val habHgt = hgtSpinner.selectedItem.toString().toInt()
+            val passPet = mutableListOf<Pet>()
+            passPet.add(
+                Pet(
+                    // TODO: Finalize pet data class attributes, retrieve here
+                    "name", petSpec, petGen, petAge
+                )
+            )
+            val passHab = Hab(
+                "name", habMat, habSub, habLen, habWid, habHgt
+            )
+            newEditor(passPet, passHab)
+        }
+        else {
+            //error message
+            val errMess = "Please make a selection for each option"
+            Toast.makeText(applicationContext, errMess, Toast.LENGTH_SHORT).show()
+        }
     }
 
-    //toolbar presses
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_about -> {
-            // TODO: Display app info popup
-            // inflate the layout of the popup window
-            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            val popupView: View = inflater.inflate(R.layout.popup_about, null)
+    fun popSpin(petList: MutableList<Pet>, habList: MutableList<Hab>){
+        //populate spinners
+        val spinOut = android.R.layout.simple_list_item_1
+        //species
+        specSpinner = findViewById(R.id.species_spinner)
+        val specList = petList.map{it.species}
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        val specArrayAdapter = ArrayAdapter(this, spinOut, specList)
+        specSpinner.adapter = specArrayAdapter
 
-            // create the popup window
-            val width = LinearLayout.LayoutParams.WRAP_CONTENT
-            val height = LinearLayout.LayoutParams.WRAP_CONTENT
-            val focusable = true // lets taps outside the popup also dismiss it
+        //gender
+        genSpinner = findViewById(R.id.gen_spinner)
+        val genList = arrayListOf("Male", "Female")
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        val genArrayAdapter = ArrayAdapter(this, spinOut, genList)
+        genSpinner.adapter = genArrayAdapter
 
-            val popupWindow = PopupWindow(popupView, width, height, focusable)
+        //age
+        ageSpinner = findViewById(R.id.age_spinner)
+        val ageList = arrayListOf(0, 1, 2)
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        val ageArrayAdapter = ArrayAdapter(this, spinOut, ageList)
+        ageSpinner.adapter = ageArrayAdapter
 
-            // show the popup window
-            popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
+        //material
+        matSpinner = findViewById(R.id.mat_spinner)
+        val matList = habList.map{it.material}
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        val matArrayAdapter = ArrayAdapter(this, spinOut, matList)
+        matSpinner.adapter = matArrayAdapter
 
-            // dismiss the popup window when touched
-            popupView.setOnTouchListener { _, _ ->
-                popupWindow.dismiss()
-                true
+        //substrate
+        subSpinner = findViewById(R.id.sub_spinner)
+        val subList = habList.map{it.substrate}
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        val subArrayAdapter = ArrayAdapter(this, spinOut, subList)
+        subSpinner.adapter = subArrayAdapter
+
+        //habitat dimensions
+        val dimList = arrayListOf(0, 1, 2)
+        lenSpinner = findViewById(R.id.len_spinner)
+        widSpinner = findViewById(R.id.wid_spinner)
+        hgtSpinner = findViewById(R.id.hgt_spinner)
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        val dimArrayAdapter = ArrayAdapter(this, spinOut, dimList)
+        lenSpinner.adapter = dimArrayAdapter
+        widSpinner.adapter = dimArrayAdapter
+        hgtSpinner.adapter = dimArrayAdapter
+    }
+
+    fun resSpin(petList: MutableList<Pet>, habList: MutableList<Hab>){
+        val specList = petList.map{it.species}
+        val genList = arrayListOf("Male", "Female")
+        val ageList = arrayListOf(0, 1, 2)
+        val matList = habList.map{it.material}
+        val subList = habList.map{it.substrate}
+        val dimList = arrayListOf(0, 1, 2)
+        //restore previous selections, if any
+        if (this::resPet.isInitialized){
+            if (resPet.species != "ERROR"){
+                specSpinner.setSelection(specList.indexOf(resPet.species))
             }
-            true
+            if (resPet.gender != "ERROR") {
+                genSpinner.setSelection(genList.indexOf(resPet.gender))
+            }
+            if (resPet.age != -1) {
+                ageSpinner.setSelection(ageList.indexOf(resPet.age))
+            }
         }
-        R.id.action_settings -> {
-            // TODO: Show settings UI
-            true
-        }
-        else -> {
-            // If we got here, the user's action was not recognized.
-            // Invoke the superclass to handle it.
-            super.onOptionsItemSelected(item)
+        if (this::resHab.isInitialized){
+            if (resHab.material != "ERROR"){
+                matSpinner.setSelection(matList.indexOf(resHab.material))
+            }
+            if (resHab.substrate != "ERROR"){
+                subSpinner.setSelection(subList.indexOf(resHab.substrate))
+            }
+            if (resHab.length != -1){
+                lenSpinner.setSelection(dimList.indexOf(resHab.length))
+            }
+            if (resHab.width != -1){
+                widSpinner.setSelection(dimList.indexOf(resHab.width))
+            }
+            if (resHab.height != -1){
+                hgtSpinner.setSelection(dimList.indexOf(resHab.height))
+            }
         }
     }
 
-    //navigation drawer presses
+    //save and repopulate input on device reorientation
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        var passSpec = "ERROR"
+        var passGen = "ERROR"
+        var passAge = -1
+        if (this::specSpinner.isInitialized){
+            passSpec = specSpinner.selectedItem.toString()
+        }
+        if (this::genSpinner.isInitialized){
+            passGen = genSpinner.selectedItem.toString()
+        }
+        if (this::ageSpinner.isInitialized){
+            passAge = ageSpinner.selectedItem.toString().toInt()
+        }
+        outState.putParcelable("pet", Pet("name", passSpec, passGen, passAge))
+        var passMat = "ERROR"
+        var passSub = "ERROR"
+        var passLen = -1
+        var passWid = -1
+        var passHgt = -1
+        if (this::matSpinner.isInitialized){
+            passMat = matSpinner.selectedItem.toString()
+        }
+        if (this::subSpinner.isInitialized){
+            passSub = subSpinner.selectedItem.toString()
+        }
+        if (this::lenSpinner.isInitialized){
+            passLen = lenSpinner.selectedItem.toString().toInt()
+        }
+        if (this::widSpinner.isInitialized){
+            passWid = widSpinner.selectedItem.toString().toInt()
+        }
+        if (this::hgtSpinner.isInitialized){
+            passHgt = hgtSpinner.selectedItem.toString().toInt()
+        }
+        outState.putParcelable("hab", Hab("name", passMat, passSub, passLen, passWid, passHgt))
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        resPet = savedInstanceState.getParcelable("pet")!!
+        resHab = savedInstanceState.getParcelable("hab")!!
+    }
+
+    //navigation drawer presses, override for home button
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.nav_home-> {
@@ -217,14 +268,5 @@ class CreateActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
         mainAct.closeDrawer(GravityCompat.START)
         return true
-    }
-
-    override fun onBackPressed() {
-        if(mainAct.isDrawerOpen(GravityCompat.START)){
-            mainAct.closeDrawer(GravityCompat.START)
-        }
-        else {
-            super.onBackPressed()
-        }
     }
 }
