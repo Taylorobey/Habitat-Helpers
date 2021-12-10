@@ -1,10 +1,13 @@
 package com.example.habitathelpers
 
+import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.View
+import android.view.*
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
 import com.google.android.material.navigation.NavigationView
@@ -28,7 +31,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setContentView(R.layout.activity_main)
 
         // use custom toolbar
-        // TODO: additional toolbar functionality
         setSupportActionBar(toolbar)
 
         //navigation drawer setup
@@ -86,6 +88,50 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             .commit()
     }
 
+    //menu inflation
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.bar_main, menu)
+        return true
+    }
+
+    //toolbar presses
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_about -> {
+            // TODO: Display app info popup
+            // inflate the layout of the popup window
+            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val popupView: View = inflater.inflate(R.layout.popup_about, null)
+
+            // create the popup window
+            val width = LinearLayout.LayoutParams.WRAP_CONTENT
+            val height = LinearLayout.LayoutParams.WRAP_CONTENT
+            val focusable = true // lets taps outside the popup also dismiss it
+
+            val popupWindow = PopupWindow(popupView, width, height, focusable)
+
+            // show the popup window
+            popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
+
+            // dismiss the popup window when touched
+            popupView.setOnTouchListener { _, _ ->
+                popupWindow.dismiss()
+                true
+            }
+            true
+        }
+        R.id.action_settings -> {
+            // TODO: Show settings UI
+            true
+        }
+        else -> {
+            // If we got here, the user's action was not recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
+        }
+    }
+
     //navigation drawer presses
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
@@ -101,7 +147,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_load -> {
                 val intent = Intent(this, LoadActivity::class.java)
                 intent.putExtra("action", 0)
-                startActivity(intent)
+                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
             }
         }
         mainAct.closeDrawer(GravityCompat.START)

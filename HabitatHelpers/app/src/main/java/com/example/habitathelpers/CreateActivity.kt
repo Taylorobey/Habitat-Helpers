@@ -1,8 +1,9 @@
 package com.example.habitathelpers
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
+import android.view.*
 import android.widget.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -151,6 +152,50 @@ class CreateActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             intent.putExtra("newHab", passHab)
         }
         startActivity(intent)
+    }
+
+    //menu inflation
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.bar_main, menu)
+        return true
+    }
+
+    //toolbar presses
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_about -> {
+            // TODO: Display app info popup
+            // inflate the layout of the popup window
+            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val popupView: View = inflater.inflate(R.layout.popup_about, null)
+
+            // create the popup window
+            val width = LinearLayout.LayoutParams.WRAP_CONTENT
+            val height = LinearLayout.LayoutParams.WRAP_CONTENT
+            val focusable = true // lets taps outside the popup also dismiss it
+
+            val popupWindow = PopupWindow(popupView, width, height, focusable)
+
+            // show the popup window
+            popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
+
+            // dismiss the popup window when touched
+            popupView.setOnTouchListener { _, _ ->
+                popupWindow.dismiss()
+                true
+            }
+            true
+        }
+        R.id.action_settings -> {
+            // TODO: Show settings UI
+            true
+        }
+        else -> {
+            // If we got here, the user's action was not recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
+        }
     }
 
     //navigation drawer presses

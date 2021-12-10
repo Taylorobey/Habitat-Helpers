@@ -1,8 +1,8 @@
 package com.example.habitathelpers
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -10,14 +10,23 @@ import com.google.android.material.navigation.NavigationView
 import android.content.ClipData
 import android.content.ClipDescription
 import android.os.Build
-import android.view.DragEvent
-import android.view.View
+import android.view.*
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.habitathelpers.databinding.ActivityEditorBinding
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.activity_login.mainAct
+import kotlinx.android.synthetic.main.activity_login.navView
+import kotlinx.android.synthetic.main.activity_login.textView
+import kotlinx.android.synthetic.main.activity_login.toolbar
+import kotlin.collections.MutableList
 
-class EditorActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener{
+
+class EditorActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, RecycleAdapter.MyItemClickListener{
 
     // Declare variables for pet and hab lists
     private lateinit var petList: MutableList<Pet>
@@ -30,65 +39,8 @@ class EditorActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     //drag and drop binding
     private lateinit var binding: ActivityEditorBinding
 
-    //drag event listener
-    private val DragListener = View.OnDragListener { view, dragEvent ->
-
-        //reference dragged item
-        val draggableItem = dragEvent.localState as View
-
-        //action responses
-        when (dragEvent.action) {
-            DragEvent.ACTION_DRAG_STARTED -> {
-                true
-            }
-            DragEvent.ACTION_DRAG_ENTERED -> {
-                binding.editorSpace.alpha = 0.3f
-                true
-            }
-            DragEvent.ACTION_DRAG_LOCATION -> {
-                true
-            }
-            DragEvent.ACTION_DRAG_EXITED -> {
-                binding.editorSpace.alpha = 1.0f
-                draggableItem.visibility = View.VISIBLE
-                view.invalidate()
-                true
-            }
-            DragEvent.ACTION_DROP -> {
-                binding.editorSpace.alpha = 1.0f
-                // position dropped
-                val newX = dragEvent.x - (draggableItem.width / 2)
-                val newY = dragEvent.y - (draggableItem.height / 2)
-                val parent = draggableItem.parent as ConstraintLayout
-                /*if (dragEvent.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                    val draggedData = dragEvent.clipData.getItemAt(0).text
-                    //TODO : place dragged object in view
-                }*/
-                // if object would be placed entirely within new view
-                val inView = true
-                if (inView) {
-                    //place where dropped
-                    draggableItem.x = newX
-                    draggableItem.y = newY
-                    //remove from parent
-                    parent.removeView(draggableItem)
-                    //add to editor view
-                    val dropArea = view as ConstraintLayout
-                    dropArea.addView(draggableItem)
-                }
-                true
-            }
-            DragEvent.ACTION_DRAG_ENDED -> {
-                draggableItem.visibility = View.VISIBLE
-                view.invalidate()
-                true
-            }
-            else -> {
-                false
-            }
-        }
-    }
-
+    //recycleadapter
+    private lateinit var myAdapter: RecycleAdapter
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,19 +73,156 @@ class EditorActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             currHab = extras.getParcelable<Hab>("newHab")!!
         }
 
+        // TODO: get habitat components for recycler
+        // temporary list to test functionality
+        val testHab = mutableListOf<String>("Test 1", "Test 2", "Test 3")
+        //recyclerview setup
+        val rview = findViewById<RecyclerView>(R.id.rview)
+        myAdapter=RecycleAdapter(testHab)
+        myAdapter.setMyItemClickListener(this)
+        rview.adapter = myAdapter
+        rview.layoutManager = LinearLayoutManager(this)
+
+
         //viewbinding
         binding = ActivityEditorBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
         //drag listeners
-        attachDragViewListener()
-        //bind to imageview
-        binding.editorSpace.setOnDragListener(DragListener)
+        //drag shadow listener for each object that can be dragged
+        attachDragViewListener(textView)
+        //drag event listener for editor view
+        val EditorDragListener = View.OnDragListener { view, dragEvent ->
+
+            //reference dragged item
+            val draggableItem = dragEvent.localState as View
+
+            //action responses
+            when (dragEvent.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    binding.editorSpace.alpha = 0.3f
+                    true
+                }
+                DragEvent.ACTION_DRAG_LOCATION -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    binding.editorSpace.alpha = 1.0f
+                    draggableItem.visibility = View.VISIBLE
+                    view.invalidate()
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+                    binding.editorSpace.alpha = 1.0f
+                    // position dropped
+                    val newX = dragEvent.x - (draggableItem.width / 2)
+                    val newY = dragEvent.y - (draggableItem.height / 2)
+                    val parent = draggableItem.parent as ConstraintLayout
+                    /*if (dragEvent.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                        val draggedData = dragEvent.clipData.getItemAt(0).text
+                        //TODO : place dragged object in view
+                    }*/
+                    // if object would be placed entirely within new view
+                    val inView = true
+                    if (inView) {
+                        //place where dropped
+                        draggableItem.x = newX
+                        draggableItem.y = newY
+                        //remove from parent
+                        parent.removeView(draggableItem)
+                        //add to editor view
+                        val dropArea = view as ConstraintLayout
+                        dropArea.addView(draggableItem)
+                    }
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    draggableItem.visibility = View.VISIBLE
+                    view.invalidate()
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
+        //drag event listener for recyclerView
+        val RecyclerDragListener = View.OnDragListener { view, dragEvent ->
+
+            //reference dragged item
+            val draggableItem = dragEvent.localState as View
+
+            //action responses
+            when (dragEvent.action) {
+                DragEvent.ACTION_DRAG_STARTED -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENTERED -> {
+                    binding.editorSpace.alpha = 0.3f
+                    true
+                }
+                DragEvent.ACTION_DRAG_LOCATION -> {
+                    true
+                }
+                DragEvent.ACTION_DRAG_EXITED -> {
+                    binding.editorSpace.alpha = 1.0f
+                    draggableItem.visibility = View.VISIBLE
+                    view.invalidate()
+                    true
+                }
+                DragEvent.ACTION_DROP -> {
+                    binding.editorSpace.alpha = 1.0f
+                    // position dropped
+                    val newX = dragEvent.x - (draggableItem.width / 2)
+                    val newY = dragEvent.y - (draggableItem.height / 2)
+                    val parent = draggableItem.parent as ConstraintLayout
+                    /*if (dragEvent.clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                        val draggedData = dragEvent.clipData.getItemAt(0).text
+                        //TODO : place dragged object in view
+                    }*/
+                    // if object would be placed entirely within new view
+                    val inView = true
+                    if (inView) {
+                        //place where dropped
+                        draggableItem.x = newX
+                        draggableItem.y = newY
+                        //remove from parent
+                        parent.removeView(draggableItem)
+                        //add to editor view
+                        val dropArea = view as ConstraintLayout
+                        dropArea.addView(draggableItem)
+                    }
+                    true
+                }
+                DragEvent.ACTION_DRAG_ENDED -> {
+                    draggableItem.visibility = View.VISIBLE
+                    view.invalidate()
+                    true
+                }
+                else -> {
+                    false
+                }
+            }
+        }
+
+        //bind to constraint layout
+        binding.editorSpace.setOnDragListener(EditorDragListener)
+        binding.recyclerSpace.setOnDragListener(RecyclerDragListener)
+    }
+
+    override fun onItemClick(view: View, position: Int) {
+        // TODO: item interaction
+    }
+    override fun onItemLongClicked(position: Int) {
+        // TODO: drag and drop card item long clicked
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun attachDragViewListener(){
+    private fun attachDragViewListener(textView: TextView) {
 
         binding.textView.setOnLongClickListener { view: View ->
 
@@ -163,6 +252,53 @@ class EditorActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     //Component information from database
     //Drag-and-drop interface
     //Alternate layout for tablets
+
+    // TODO: determine why action bar and recyclerView ar not appearing
+
+
+    //menu inflation
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.bar_main, menu)
+        return true
+    }
+
+    //toolbar presses
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_about -> {
+            // TODO: Display app info popup
+            // inflate the layout of the popup window
+            val inflater = getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            val popupView: View = inflater.inflate(R.layout.popup_about, null)
+
+            // create the popup window
+            val width = LinearLayout.LayoutParams.WRAP_CONTENT
+            val height = LinearLayout.LayoutParams.WRAP_CONTENT
+            val focusable = true // lets taps outside the popup also dismiss it
+
+            val popupWindow = PopupWindow(popupView, width, height, focusable)
+
+            // show the popup window
+            popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0)
+
+            // dismiss the popup window when touched
+            popupView.setOnTouchListener { _, _ ->
+                popupWindow.dismiss()
+                true
+            }
+            true
+        }
+        R.id.action_settings -> {
+            // TODO: Show settings UI
+            true
+        }
+        else -> {
+            // If we got here, the user's action was not recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
+        }
+    }
 
     //navigation drawer presses
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
