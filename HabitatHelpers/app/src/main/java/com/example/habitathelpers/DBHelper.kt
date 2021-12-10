@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import kotlinx.coroutines.runBlocking
+
 
 class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VER) {
 
@@ -12,6 +14,8 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
     private lateinit var habList: MutableList<Hab>
 
     override fun onCreate(db: SQLiteDatabase?) {
+        db!!.execSQL(DROP_TABLE_HABS)
+        db.execSQL(DROP_TABLE_PETS)
         db!!.execSQL(CREATE_TABLE_HABS)
         db.execSQL(CREATE_TABLE_PETS)
         initializeTables(db)
@@ -28,17 +32,12 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         val p = db.rawQuery(queryp, null)
         val queryh = "SELECT * FROM habs"
         val h = db.rawQuery(queryh, null)
-        if( p.count <= 0) {
+        if( p.count <= 0 || h.count <= 0){
             //initialize pets table
-            insertAllPets()
-        }
-        if( h.count <= 0) {
-            //initialize habs table
-            insertAllHabs()
+            insertAll(db)
         }
         p.close()
         h.close()
-        // TODO: get database from external source, import to local database
     }
 
     fun closeDB(){
@@ -74,8 +73,10 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         val c = db.rawQuery(query, null)
         c.moveToFirst()
         while (!c.isAfterLast){
-            val newPet = getPet(c.getString(c.getColumnIndex(COL_NAME)))
-            petList.add(newPet)
+            if (c.getString(c.getColumnIndex(COL_SPECIES)) != null) {
+                val newPet = getPet(c.getString(c.getColumnIndex(COL_SPECIES)))
+                petList.add(newPet)
+            }
             c.moveToNext()
         }
         c.close()
@@ -90,23 +91,26 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         val c = db.rawQuery(query, null)
         c.moveToFirst()
         while (!c.isAfterLast){
-            val newHab = getHab(c.getString(c.getColumnIndex(COL_NAME)))
-            habList.add(newHab)
+            if (c.getString(c.getColumnIndex(COL_MATERIAL)) != null) {
+                val newHab = getHab(c.getString(c.getColumnIndex(COL_MATERIAL)))
+                habList.add(newHab)
+            }
             c.moveToNext()
         }
         c.close()
         return habList
     }
 
-    fun getPet(petName: String): Pet{
-        val query = "SELECT * FROM pets WHERE \'name=" + petName + "\'"
+    @SuppressLint("Range")
+    fun getPet(petSpec: String): Pet{
+        val query = "SELECT * FROM pets WHERE species='$petSpec'"
         val db = this.readableDatabase
         val c = db.rawQuery(query, null)
         c.moveToFirst()
         val newPet = Pet(
             // TODO: Finalize pet data class attributes, retrieve here
             "name",
-            "species",
+            c.getString(c.getColumnIndex(COL_SPECIES)),
             "gender",
             1
         )
@@ -114,15 +118,17 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         return newPet
     }
 
-    fun getHab(habName: String): Hab{
-        val query = "SELECT * FROM habs WHERE \'name=" + habName + "\'"
+    @SuppressLint("Range")
+    fun getHab(habMat: String): Hab{
+        val query = "SELECT * FROM habs WHERE material='$habMat'"
         val db = this.readableDatabase
         val c = db.rawQuery(query, null)
+        c.moveToFirst()
         val newHab = Hab(
             // TODO: Finalize enclosure data class attributes, retrieve here
             "name",
-            "material",
-            "substrate",
+            c.getString(c.getColumnIndex(COL_MATERIAL)),
+            c.getString(c.getColumnIndex(COL_SUBSTRATE)),
             0,
             0,
             0
@@ -131,13 +137,36 @@ class DBHelper(context: Context): SQLiteOpenHelper(context, DB_NAME, null, DB_VE
         return newHab
     }
 
-    fun insertAllPets(){
-        // TODO: load test data
+
+    fun insertAll(db: SQLiteDatabase?) = runBlocking {
+        //test data
+        db!!.execSQL(TEST_DATAP1)
+        db.execSQL(TEST_DATAP2)
+        db.execSQL(TEST_DATAP3)
+        db.execSQL(TEST_DATAP4)
+        db.execSQL(TEST_DATAH1)
+        db.execSQL(TEST_DATAH2)
     }
 
-    fun insertAllHabs(){
-        // TODO: load test data
-    }
+/*    @RequiresApi(Build.VERSION_CODES.O)
+    @SuppressLint("Range")
+    fun insertAllHabs(db: SQLiteDatabase?){
+        // load test data to local database
+        val dbFile= openDatabase(DBPATH, null, SQLiteDatabase.OPEN_READWRITE)
+        var query = "SELECT * FROM habs"
+        val c = dbFile.rawQuery(query, null)
+        c.moveToFirst()
+        while (!c.isAfterLast){
+            query = "INSERT INTO habs (id, material, substrate) VALUES"
+            if (db != null) {
+                db.rawQuery((query + c.getInt(c.getColumnIndex(COL_ID)) + c.getString(c.getColumnIndex(
+                    COL_MATERIAL)) + c.getString(c.getColumnIndex(COL_SUBSTRATE))), null)
+            }
+            c.moveToNext()
+        }
+        c.close()
+        dbFile.close()
+    }*/
 
     /*db_id = c.getInt(c.getColumnIndex(COL_ID)),
 checked = false,
@@ -244,6 +273,7 @@ vote_count= c.getInt(c.getColumnIndex(COL_VOTE_CNT)),*/
 
         //values for habitat table
         private val COL_MATERIAL = "material"
+        private val COL_SUBSTRATE = "substrate"
         private val COL_WIDTH = "width"
         private val COL_LENGTH= "length"
         private val COL_HEIGHT = "height"
@@ -254,7 +284,7 @@ vote_count= c.getInt(c.getColumnIndex(COL_VOTE_CNT)),*/
                 "$COL_GENDER TEXT, $COL_AGE INTEGER )"
         // create table habs
         private val CREATE_TABLE_HABS = "CREATE TABLE IF NOT EXISTS habs " +
-                "( $COL_ID INTEGER PRIMARY KEY, $COL_MATERIAL TEXT, $COL_WIDTH INTEGER, " +
+                "( $COL_ID INTEGER PRIMARY KEY, $COL_MATERIAL TEXT, $COL_SUBSTRATE TEXT, $COL_WIDTH INTEGER, " +
                 "$COL_LENGTH INTEGER, $COL_HEIGHT INTEGER )"
 
 
@@ -262,5 +292,13 @@ vote_count= c.getInt(c.getColumnIndex(COL_VOTE_CNT)),*/
         private val DROP_TABLE_PETS = "DROP TABLE IF EXISTS pets"
         //delete table habs
         private val DROP_TABLE_HABS = "DROP TABLE IF EXISTS habs"
+
+        //adding test data
+        private val TEST_DATAP1 = "INSERT INTO pets ($COL_ID, $COL_SPECIES) VALUES (1, 'Ball Python')"
+        private val TEST_DATAP2 = "INSERT INTO pets (id, species) VALUES (2, 'Leopard Gecko')"
+        private val TEST_DATAP3 = "INSERT INTO pets (id, species) VALUES (3, 'Crested Gecko')"
+        private val TEST_DATAP4 = "INSERT INTO pets (id, species) VALUES (4, 'Bearded Dragon')"
+        private val TEST_DATAH1 = "INSERT INTO habs (id, material, substrate) VALUES (1, 'Plastic', 'Paper')"
+        private val TEST_DATAH2 = "INSERT INTO habs (id, material, substrate) VALUES (2, 'Glass', 'Coconut Fiber')"
     }
 }

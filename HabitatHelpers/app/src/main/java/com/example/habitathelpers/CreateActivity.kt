@@ -42,9 +42,6 @@ class CreateActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         petList = myDB.getAllPets()
         habList = myDB.getAllHabs()
 
-        petList.add(Pet("test", "test", "test", 1))
-        petList.add(Pet("test2", "test2", "test2", 1))
-
         //populate spinners
         val spinOut = android.R.layout.simple_list_item_1
         //species
