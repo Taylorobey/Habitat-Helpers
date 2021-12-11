@@ -74,6 +74,12 @@
             android:parentActivityName="com.example.habitathelpers.MainActivity"
             android:theme="@style/Theme.HabitatHelpers"/>
 
+        <activity
+            android:name=".YTActivity"
+            android:exported="true"
+            android:parentActivityName="com.example.habitathelpers.MainActivity"
+            android:theme="@style/Theme.HabitatHelpers"/>
+
     </application>
 
 </manifest>

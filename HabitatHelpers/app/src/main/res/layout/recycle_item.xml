@@ -10,7 +10,8 @@
     app:cardElevation="4dp"
     app:contentPadding="5dp"
     app:cardMaxElevation="10dp"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="true"
+    android:transitionName="transition_card">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

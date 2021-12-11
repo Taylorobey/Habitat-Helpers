@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.recycle_item.view.*
 import android.content.Context
 import android.graphics.drawable.Drawable
+import androidx.cardview.widget.CardView
 import com.squareup.picasso.Picasso
 
 class RecycleAdapter(context:Context, private var db: DBHelper) :
@@ -62,7 +63,6 @@ class RecycleAdapter(context:Context, private var db: DBHelper) :
         lastPosition = position
     }
 
-
     fun getPet(i: Int): Pet {
         return petSet[i]
     }
@@ -104,6 +104,9 @@ class RecycleAdapter(context:Context, private var db: DBHelper) :
                     }
                 }
             }
+        }
+        fun getView(): CardView? {
+            return petView
         }
     }
 
