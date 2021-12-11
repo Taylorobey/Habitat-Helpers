@@ -13,5 +13,9 @@
             android:id="@+id/nav_load"
             android:icon="@drawable/ic_cloud_download"
             android:title="@string/load_a_habitat"/>
+        <item
+            android:id="@+id/nav_learn"
+            android:icon="@drawable/ic_book"
+            android:title="@string/learn_more"/>
     </group>
 </menu>

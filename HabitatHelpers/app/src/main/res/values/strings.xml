@@ -25,4 +25,17 @@
     <string name="action_settings">Settings</string>
     <string name="action_about">About</string>
     <string name="about">Habitat Helper\nCIS 400/600\nTaylor Robey\nAnton Lohner</string>
+    <string name="create_user">Create User</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="create_account">Create Account</string>
+    <string name="learn_more">Learn more</string>
+    <string name="name">name</string>
+    <string name="learn_more_about_popular_reptiles">Learn more about popular reptiles!</string>
+    <string name="pythonInfo">Ball pythons make for a quality pet for the first-time keeper and experienced herpetoculturists alike. Each year, breeders create incredible, innovative, never-before-seen pattern and color variations that continually generate new fans of the ball python. With reptile health and wellness in mind, this species thrives in captivity.</string>
+    <string name="leopardGeckoInfo">The leopard gecko (Eublepharis macularius) lizard has been captive bred in the United States for more than 30 years and is one of the most commonly kept lizards today. These hardy saurians come in a variety of colors, patterns and sizes. This is a great species for the home. Imagine a lizard that can vocalize and wash an eye with its tongue with ease.</string>
+    <string name="crestedGeckoInfo">What’s not to love about crested geckos (Rhacodactylus ciliatus)? They are docile and easy to handle. They don’t bite, are relatively easy to keep and come in an astonishing number of colors and patterns. They even wear a perpetual smile. Crested geckos are fast becoming one of the most popular pet reptiles.</string>
+    <string name="beardedDragonInfo">The inland bearded dragon is generally considered one of the all-time best lizard pets. It is known for being alert, hardy and tame, and bearded dragon owners love watching their lizards, whether during a feeding frenzy while chasing crickets or simply interacting with each other.</string>
+    <string name="ipsum">\"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?\"</string>
+    <string name="api">AIzaSyBxNrCSkoL1ZyPWSCmasl0Juh6h7-nStMM</string>
 </resources>

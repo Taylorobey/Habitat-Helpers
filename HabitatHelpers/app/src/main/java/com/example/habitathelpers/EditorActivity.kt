@@ -1,28 +1,18 @@
 package com.example.habitathelpers
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import com.google.android.material.navigation.NavigationView
 import android.content.ClipData
 import android.content.ClipDescription
 import android.os.Build
 import android.view.*
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.habitathelpers.databinding.ActivityEditorBinding
-import kotlinx.android.synthetic.main.activity_login.mainAct
-import kotlinx.android.synthetic.main.activity_login.navView
-import kotlinx.android.synthetic.main.activity_login.textView
-import kotlinx.android.synthetic.main.activity_login.toolbar
+import kotlinx.android.synthetic.main.activity_editor.*
 import kotlin.collections.MutableList
 
 
@@ -77,8 +67,8 @@ class EditorActivity : ActivityParent(), RecycleAdapter.MyItemClickListener{
         val testHab = mutableListOf<String>("Test 1", "Test 2", "Test 3")
         //recyclerview setup
         val rview = findViewById<RecyclerView>(R.id.rview)
-        myAdapter=RecycleAdapter(testHab)
-        myAdapter.setMyItemClickListener(this)
+        myAdapter=RecycleAdapter(this, myDB)
+        //myAdapter.setMyItemClickListener(this)
         rview.adapter = myAdapter
         rview.layoutManager = LinearLayoutManager(this)
 
@@ -216,7 +206,7 @@ class EditorActivity : ActivityParent(), RecycleAdapter.MyItemClickListener{
     override fun onItemClick(view: View, position: Int) {
         // TODO: item interaction
     }
-    override fun onItemLongClicked(position: Int) {
+    fun onItemLongClicked(position: Int) {
         // TODO: drag and drop card item long clicked
     }
 

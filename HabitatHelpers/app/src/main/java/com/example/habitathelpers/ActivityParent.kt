@@ -8,7 +8,6 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -29,6 +28,12 @@ open class ActivityParent() : AppCompatActivity(), NavigationView.OnNavigationIt
     //toolbar presses
     @SuppressLint("ClickableViewAccessibility")
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_learn -> {
+            val intent = Intent(this, LearnActivity::class.java)
+            intent.putExtra("action", 0)
+            startActivity(intent)
+            true
+        }
         R.id.action_about -> {
             // Display app info popup
             // inflate the layout of the popup window
@@ -78,6 +83,11 @@ open class ActivityParent() : AppCompatActivity(), NavigationView.OnNavigationIt
             }
             R.id.nav_load -> {
                 val intent = Intent(this, LoadActivity::class.java)
+                intent.putExtra("action", 0)
+                startActivity(intent)
+            }
+            R.id.nav_learn -> {
+                val intent = Intent(this, LearnActivity::class.java)
                 intent.putExtra("action", 0)
                 startActivity(intent)
             }

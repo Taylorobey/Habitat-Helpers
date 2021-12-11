@@ -37,8 +37,8 @@ class LoadFragment : androidx.fragment.app.Fragment() {
     }
 
     companion object {
-        fun newInstance() : LoginFragment{
-            return LoginFragment()
+        fun newInstance() : LoadFragment{
+            return LoadFragment()
         }
     }
 

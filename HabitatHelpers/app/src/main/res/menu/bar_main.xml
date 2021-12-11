@@ -4,6 +4,11 @@
 
     <!-- Appear as action button if possible -->
     <item
+        android:id="@+id/action_learn"
+        android:icon="@drawable/ic_book"
+        android:title="@string/learn_more"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/action_about"
         android:icon="@drawable/ic_info"
         android:title="@string/action_about"

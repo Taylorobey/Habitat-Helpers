@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.habitathelpers">
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <queries>
+        <package android:name="com.google.android.youtube" />
+    </queries>
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data  android:scheme="https" android:host="youtube.com" />
+        </intent>
+    </queries>
 
     <application
         android:allowBackup="true"
@@ -52,6 +64,12 @@
 
         <activity
             android:name=".EditorActivity"
+            android:exported="true"
+            android:parentActivityName="com.example.habitathelpers.MainActivity"
+            android:theme="@style/Theme.HabitatHelpers"/>
+
+        <activity
+            android:name=".LearnActivity"
             android:exported="true"
             android:parentActivityName="com.example.habitathelpers.MainActivity"
             android:theme="@style/Theme.HabitatHelpers"/>

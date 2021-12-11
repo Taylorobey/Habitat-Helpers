@@ -1,32 +1,26 @@
 package com.example.habitathelpers
 
-import android.annotation.SuppressLint
-import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.view.*
-import android.widget.LinearLayout
-import android.widget.PopupWindow
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import com.example.habitathelpers.LoadFragment.OnLoadInteractionListener
-import com.google.android.material.navigation.NavigationView
-import kotlinx.android.synthetic.main.activity_load.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import jp.wasabeef.recyclerview.adapters.AlphaInAnimationAdapter
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import kotlinx.android.synthetic.main.activity_load.mainAct
 import kotlinx.android.synthetic.main.activity_load.navView
 import kotlinx.android.synthetic.main.activity_load.toolbar
-import kotlinx.android.synthetic.main.activity_main.*
 
-class LoadActivity : ActivityParent(), OnLoadInteractionListener {
+
+class LearnActivity : ActivityParent(), RecycleAdapter.MyItemClickListener {
+    private lateinit var myAdapter: RecycleAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_load)
-
-        //inflate with load habitat fragment
-        supportFragmentManager.beginTransaction().replace(R.id.linear2, LoadFragment())
-            .addToBackStack("")
-            .commit()
+        setContentView(R.layout.activity_learn)
 
         // use custom toolbar
         setSupportActionBar(toolbar)
@@ -37,9 +31,28 @@ class LoadActivity : ActivityParent(), OnLoadInteractionListener {
         toggle.syncState()
 
         navView.setNavigationItemSelectedListener(this)
+        val myDB = DBHelper(this)
+
+        //recyclerview setup
+        val rview = findViewById<RecyclerView>(R.id.rview)
+        rview.layoutManager= LinearLayoutManager(this)
+        myAdapter=RecycleAdapter(this, myDB)
+        myAdapter.setMyItemClickListener(this)
+        rview.itemAnimator = SlideInLeftAnimator()
+        rview.adapter = AlphaInAnimationAdapter(myAdapter).apply {
+            setDuration(1200)
+            setFirstOnly(false)
+        }
     }
 
-    //navigation drawer presses, override for load button
+    override fun onItemClick(view: View, position: Int) {
+        //open information fragment in Linear2
+        supportFragmentManager.beginTransaction().replace(R.id.linear2, LearnFragment(this, position) )
+            .addToBackStack("")
+            .commit()
+    }
+
+    //navigation drawer presses, override for learn button
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.nav_home-> {
@@ -53,27 +66,15 @@ class LoadActivity : ActivityParent(), OnLoadInteractionListener {
                 startActivity(intent)
             }
             R.id.nav_load -> {
-                //do nothing
-            }
-            R.id.nav_learn -> {
-                val intent = Intent(this, LearnActivity::class.java)
+                val intent = Intent(this, LoadActivity::class.java)
                 intent.putExtra("action", 0)
                 startActivity(intent)
+            }
+            R.id.nav_learn -> {
+                //do nothing
             }
         }
         mainAct.closeDrawer(GravityCompat.START)
         return true
-    }
-
-    //override to handle uninflating fragment
-    override fun onBackPressed() {
-        if(mainAct.isDrawerOpen(GravityCompat.START)){
-            mainAct.closeDrawer(GravityCompat.START)
-        }
-        else {
-            //use super twice to uninflate fragment and then navigate to previous activity
-            super.onBackPressed()
-            super.onBackPressed()
-        }
     }
 }

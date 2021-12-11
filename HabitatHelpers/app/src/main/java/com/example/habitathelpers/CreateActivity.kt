@@ -116,7 +116,7 @@ class CreateActivity : ActivityParent(){
         }
     }
 
-    fun popSpin(petList: MutableList<Pet>, habList: MutableList<Hab>){
+    private fun popSpin(petList: MutableList<Pet>, habList: MutableList<Hab>){
         //populate spinners
         val spinOut = android.R.layout.simple_list_item_1
         //species
@@ -166,7 +166,7 @@ class CreateActivity : ActivityParent(){
         hgtSpinner.adapter = dimArrayAdapter
     }
 
-    fun resSpin(petList: MutableList<Pet>, habList: MutableList<Hab>){
+    private fun resSpin(petList: MutableList<Pet>, habList: MutableList<Hab>){
         val specList = petList.map{it.species}
         val genList = arrayListOf("Male", "Female")
         val ageList = arrayListOf(0, 1, 2)
@@ -262,6 +262,11 @@ class CreateActivity : ActivityParent(){
             }
             R.id.nav_load -> {
                 val intent = Intent(this, LoadActivity::class.java)
+                intent.putExtra("action", 0)
+                startActivity(intent)
+            }
+            R.id.nav_learn -> {
+                val intent = Intent(this, LearnActivity::class.java)
                 intent.putExtra("action", 0)
                 startActivity(intent)
             }

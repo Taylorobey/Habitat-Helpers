@@ -6,24 +6,24 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
-import com.google.android.material.navigation.NavigationView
 import com.example.habitathelpers.LoginFragment.OnLoginInteractionListener
 import com.example.habitathelpers.MainFragment.OnMainInteractionListener
 import com.example.habitathelpers.LoadFragment.OnLoadInteractionListener
 import kotlinx.android.synthetic.main.activity_main.*
+import android.view.MenuItem
+import android.view.View
+
 
 class MainActivity : ActivityParent(), OnLoginInteractionListener, OnMainInteractionListener, OnLoadInteractionListener {
 
-    // TODO: CreateActivity implementation
-    // TODO: LoginActivity implementation
     // TODO: EditorActivity implementation
     // TODO: LoadActivity implementation
-    // TODO: RegActivity implementation
 
     private var subOpened: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val user = intent.extras?.get("user")
         setContentView(R.layout.activity_main)
 
         // use custom toolbar
@@ -36,20 +36,19 @@ class MainActivity : ActivityParent(), OnLoginInteractionListener, OnMainInterac
 
         navView.setNavigationItemSelectedListener(this)
 
-        // TODO: check if user is logged in
-        //current default declaration so code runs
-        //should be set to true if user is logged in
-        var loggedIn = false
-
-        //if not logged in, inflate fragment_login and get buttons
-        if (!loggedIn){
-            supportFragmentManager.beginTransaction().replace(R.id.linear2, LoginFragment())
+        //check user login
+        if (user != null){
+            // if logged in, inflate fragment_main and get buttons
+            supportFragmentManager.beginTransaction().replace(R.id.linear2, MainFragment())
                 .addToBackStack("")
                 .commit()
+            // replace toolbar name and user photo?
+
+
         }
-        // if logged in, inflate fragment_main and get buttons
-        else {
-            supportFragmentManager.beginTransaction().replace(R.id.linear2, MainFragment())
+        else{
+            //if not logged in, inflate fragment_login and get buttons
+            supportFragmentManager.beginTransaction().replace(R.id.linear2, LoginFragment())
                 .addToBackStack("")
                 .commit()
         }
@@ -98,7 +97,12 @@ class MainActivity : ActivityParent(), OnLoginInteractionListener, OnMainInterac
             R.id.nav_load -> {
                 val intent = Intent(this, LoadActivity::class.java)
                 intent.putExtra("action", 0)
-                startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(this).toBundle())
+                startActivity(intent)
+            }
+            R.id.nav_learn -> {
+                val intent = Intent(this, LearnActivity::class.java)
+                intent.putExtra("action", 0)
+                startActivity(intent)
             }
         }
         mainAct.closeDrawer(GravityCompat.START)
